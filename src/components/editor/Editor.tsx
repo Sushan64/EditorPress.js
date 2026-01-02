@@ -1,8 +1,15 @@
 import {$getRoot, $getSelection} from 'lexical';
 import {useEffect} from 'react';
 
-import {theme} from "./theme"
-import { Toolbar } from  "./ui/toolbar"
+import {theme} from "./theme.ts"
+import { Toolbar } from  "./ui/toolbar.tsx"
+
+import {
+  $convertFromMarkdownString,
+  $convertToMarkdownString,
+  TRANSFORMERS,
+} from '@lexical/markdown';
+import {MarkdownShortcutPlugin} from '@lexical/react/LexicalMarkdownShortcutPlugin';
 
 import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
@@ -11,6 +18,12 @@ import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {LexicalErrorBoundary} from '@lexical/react/LexicalErrorBoundary';
 
+// Nodes
+import {HeadingNode, QuoteNode} from '@lexical/rich-text';
+import {ListItemNode, ListNode} from '@lexical/list';
+import {CodeHighlightNode, CodeNode} from '@lexical/code';
+import {AutoLinkNode, LinkNode} from '@lexical/link';
+
 // Catch any errors that occur during Lexical updates and log them
 // or throw them as needed. If you don't throw them, Lexical will
 // try to recover gracefully without losing user data.
@@ -18,11 +31,23 @@ function onError(error: any) {
   console.error(error);
 }
 
+const markdown = "# heading"
 export default function Editor() {
   const initialConfig = {
     namespace: 'MyEditor',
     theme: theme,
     onError,
+    nodes: [
+      HeadingNode,
+      QuoteNode,
+      ListNode,
+      ListItemNode,
+      CodeNode,
+      CodeHighlightNode,
+      LinkNode,
+      AutoLinkNode,
+  ],
+    editorState: () => $convertFromMarkdownString(markdown, TRANSFORMERS),
   };
 
   return (
@@ -40,6 +65,7 @@ export default function Editor() {
       />
       <HistoryPlugin />
       <AutoFocusPlugin />
+      <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
     </LexicalComposer>
     </div>
   );

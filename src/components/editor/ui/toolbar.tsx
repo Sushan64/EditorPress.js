@@ -3,14 +3,11 @@ import {Button} from "@/components/ui/button"
 import {ButtonGroup, ButtonGroupSeparator} from "@/components/ui/button-group"
 import {Toggle} from "@/components/ui/toggle"
 import { useToolbarState } from "../context/ToolbarContext.tsx"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import DropDown, {
+  DropDownItem,
+} from "./dropdown.tsx"
+
+import {BlockFormatDropDown} from './BlockFormatDropDown.tsx'
 import {
   Bold,
   Italic,
@@ -27,6 +24,8 @@ import {mergeRegister} from '@lexical/utils';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {
   FORMAT_TEXT_COMMAND,
+  COMMAND_PRIORITY_CRITICAL,
+  SELECTION_CHANGE_COMMAND,
   $getSelection,
   $isRangeSelection,
 } from 'lexical'
@@ -43,7 +42,8 @@ export function Toolbar() {
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isSuperscript, setIsSuperscript] = useState(false);
   const [isSubscript, setIsSubscript] = useState(false);
-
+  const [isHighlight, setIsHighlight] = useState(false);
+  
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
@@ -57,25 +57,70 @@ export function Toolbar() {
       updateToolbarState('isSubscript', selection.hasFormat('subscript'));
       updateToolbarState('isSuperscript', selection.hasFormat('superscript'));
       updateToolbarState('isHighlight', selection.hasFormat('highlight'));
+      
+      const anchorNode = selection.anchor.getNode();
+      const element = anchorNode.getTopLevelElementOrThrow();
+      const elementType = element.getType();
+      const elementTag = element.getTag ? element.getTag() : null;
+
+      let blockType = "paragraph";
+      if (elementType === "heading") {
+        blockType = elementTag; 
+      }
+      else if (elementType === "quote") {
+        blockType = "quote";
+      }
+      else if (elementType === "list") {
+        blockType = element.getListType(); 
+      }
+      else if (
+        elementType === "code" || 
+        anchorNode.getParent()?.getType() === "code"
+        ) {
+        blockType = "code";
+      }
+      else {
+        blockType = "paragraph";
+      }
+      updateToolbarState("blockType", blockType);
+    
       }}, [
     activeEditor,
     editor,
   ]);
  
   useEffect(() => {
-      activeEditor.registerUpdateListener(({editorState}) => {
-        editorState.read(
-          () => {
-            $updateToolbar();
-          },
-          {editor: activeEditor},
-        );
-      })
-  }, [$updateToolbar, editor,]);
+    return mergeRegister(
+    activeEditor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        $updateToolbar();
+      });
+    }),
+
+    activeEditor.registerCommand(
+      SELECTION_CHANGE_COMMAND,
+      () => {
+        activeEditor.getEditorState().read(() => {
+          $updateToolbar();
+        });
+        return false;
+      },
+      COMMAND_PRIORITY_CRITICAL
+    )
+  );
+}, [activeEditor, $updateToolbar]);
 
 
   return (
-    <div className="space-x-3">
+    <div className="overflow-x-scroll">
+      <div className="space-x-3 flex">
+        
+        <BlockFormatDropDown
+        blockType={toolbarState.blockType}
+        rootType={toolbarState.rootType}
+        editor={activeEditor}
+        />
+        
       <ButtonGroup>
       {/* Bold Button */}
       <Button 
@@ -153,6 +198,8 @@ export function Toolbar() {
       ><Subscript />
       </Button>
       </ButtonGroup>
+            
+      </div>
     </div>
   )
 }

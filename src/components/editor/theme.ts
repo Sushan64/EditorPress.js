@@ -2,12 +2,12 @@ export const theme = {
   paragraph: 'editor-paragraph',
   quote: 'editor-quote',
   heading: {
-    h1: 'editor-heading-h1',
-    h2: 'editor-heading-h2',
-    h3: 'editor-heading-h3',
-    h4: 'editor-heading-h4',
-    h5: 'editor-heading-h5',
-    h6: 'editor-heading-h6',
+    h1: 'scroll-m-20 text-4xl font-extrabold tracking-tight text-balance',
+    h2: 'scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0',
+    h3: 'scroll-m-20 text-2xl font-semibold tracking-tight',
+    h4: 'scroll-m-20 text-xl font-semibold tracking-tight',
+    h5: 'scroll-m-20 text-lg font-semibold tracking-tight',
+    h6: 'scroll-m-20 text-md font-semibold tracking-tight',
   },
   list: {
     nested: {
