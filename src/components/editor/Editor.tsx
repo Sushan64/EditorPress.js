@@ -31,7 +31,7 @@ function onError(error: any) {
   console.error(error);
 }
 
-const markdown = "# heading"
+const markdown = ""
 export default function Editor() {
   const initialConfig = {
     namespace: 'MyEditor',

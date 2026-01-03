@@ -8,6 +8,7 @@ import DropDown, {
 } from "./dropdown.tsx"
 
 import {BlockFormatDropDown} from './BlockFormatDropDown.tsx'
+import {TextFormatDropDown} from './TextFormatDropDown.tsx'
 import {
   Bold,
   Italic,
@@ -17,6 +18,12 @@ import {
   Subscript,
   ChevronDown,
   Superscript,
+  Undo,
+  Redo,
+  TextAlignCenter,
+  TextAlignEnd,
+  TextAlignJustify,
+  TextAlignStart,
 } from 'lucide-react'
 
 // Lexcial
@@ -24,6 +31,12 @@ import {mergeRegister} from '@lexical/utils';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {
   FORMAT_TEXT_COMMAND,
+  CAN_REDO_COMMAND,
+  CAN_UNDO_COMMAND,
+  REDO_COMMAND,
+  UNDO_COMMAND,
+  FORMAT_ELEMENT_COMMAND,
+  COMMAND_PRIORITY_LOW,
   COMMAND_PRIORITY_CRITICAL,
   SELECTION_CHANGE_COMMAND,
   $getSelection,
@@ -33,8 +46,9 @@ import {
 export function Toolbar() {
   const [editor] = useLexicalComposerContext();
   const {toolbarState, updateToolbarState} = useToolbarState();
-  const [activeEditor, setActiveEditor] = useState(editor);
- 
+
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
@@ -43,6 +57,10 @@ export function Toolbar() {
   const [isSuperscript, setIsSuperscript] = useState(false);
   const [isSubscript, setIsSubscript] = useState(false);
   const [isHighlight, setIsHighlight] = useState(false);
+  const [isLeftAlign, setIsLeftAlign] = useState(false);
+  const [isRightAlign, setIsRightAlign] = useState(false);
+  const [isCenterAlign, setIsCenterAlign] = useState(false);
+  const [isJustifyAlign, setIsJustifyAlign] = useState(false);
   
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -57,75 +75,129 @@ export function Toolbar() {
       updateToolbarState('isSubscript', selection.hasFormat('subscript'));
       updateToolbarState('isSuperscript', selection.hasFormat('superscript'));
       updateToolbarState('isHighlight', selection.hasFormat('highlight'));
+      updateToolbarState('isCode', selection.hasFormat('code'));
+      
       
       const anchorNode = selection.anchor.getNode();
       const element = anchorNode.getTopLevelElementOrThrow();
       const elementType = element.getType();
+      const elementFormat = element.getFormatType();
       const elementTag = element.getTag ? element.getTag() : null;
-
-      let blockType = "paragraph";
-      if (elementType === "heading") {
-        blockType = elementTag; 
-      }
-      else if (elementType === "quote") {
-        blockType = "quote";
-      }
-      else if (elementType === "list") {
-        blockType = element.getListType(); 
-      }
-      else if (
-        elementType === "code" || 
-        anchorNode.getParent()?.getType() === "code"
-        ) {
-        blockType = "code";
-      }
-      else {
-        blockType = "paragraph";
+      
+      let blockType;
+      switch (elementType){
+        case "heading":
+          blockType = elementTag; 
+          break
+        case "quote":
+          blockType ="quote";
+          break
+        case "list":
+          blockType = element.getListType();
+          break
+        case "code":
+          blockType = "code";
+          break
+        default:
+          blockType = "paragraph"
       }
       updateToolbarState("blockType", blockType);
     
-      }}, [
-    activeEditor,
-    editor,
-  ]);
+      let textFormat;
+      switch (elementFormat){
+        case 'right':
+          textFormat = "right";
+          break
+        case "center":
+          textFormat = "center";
+          break
+        case "justify":
+          textFormat = "justify";
+          break
+        default:
+          textFormat = "left";
+      }
+      updateToolbarState("textFormat", textFormat);
+      
+      }}, []);
  
   useEffect(() => {
     return mergeRegister(
-    activeEditor.registerUpdateListener(({ editorState }) => {
-      editorState.read(() => {
-        $updateToolbar();
-      });
-    }),
+    editor.registerUpdateListener(({editorState}) => {
+        editorState.read(
+          () => {
+            $updateToolbar();
+          },
+          {editor},
+        );
+      }),
 
-    activeEditor.registerCommand(
-      SELECTION_CHANGE_COMMAND,
-      () => {
-        activeEditor.getEditorState().read(() => {
+    editor.registerCommand(
+        SELECTION_CHANGE_COMMAND,
+        (_payload, _newEditor) => {
           $updateToolbar();
-        });
-        return false;
-      },
-      COMMAND_PRIORITY_CRITICAL
-    )
+          return false;
+        },
+        COMMAND_PRIORITY_LOW,
+      ),
+      
+    
+    editor.registerCommand(
+        CAN_UNDO_COMMAND,
+        (payload) => {
+          setCanUndo(payload);
+          return false;
+        },
+        COMMAND_PRIORITY_LOW,
+      ),
+      editor.registerCommand(
+        CAN_REDO_COMMAND,
+        (payload) => {
+          setCanRedo(payload);
+          return false;
+        },
+        COMMAND_PRIORITY_LOW,
+      ),
   );
-}, [activeEditor, $updateToolbar]);
+}, [editor, $updateToolbar]);
 
 
   return (
     <div className="overflow-x-scroll">
       <div className="space-x-3 flex">
-        
+        <ButtonGroup>
+        <Button
+        disabled={!canUndo}
+        onClick={() => {
+          editor.dispatchCommand(UNDO_COMMAND, undefined);
+        }}
+        variant="outline"
+        size="sm"
+        aria-label="Undo">
+        <Undo />
+      </Button>
+      <Button
+        disabled={!canRedo}
+        onClick={() => {
+          editor.dispatchCommand(REDO_COMMAND, undefined);
+        }}
+        variant="outline"
+        size="sm"
+        aria-label="Redo">
+        <Redo />
+      </Button>
+        </ButtonGroup>
         <BlockFormatDropDown
         blockType={toolbarState.blockType}
         rootType={toolbarState.rootType}
-        editor={activeEditor}
+        editor={editor}
         />
         
       <ButtonGroup>
       {/* Bold Button */}
       <Button 
       onClick={()=> {
-        activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
       }}
       size="sm"
       variant="outline"
@@ -135,7 +207,7 @@ export function Toolbar() {
       {/* Italic Button */}
       <Button
       onClick={()=> {
-        activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
       }}
       size="sm"
       className={toolbarState.isItalic ? "bg-muted": ""}
@@ -146,7 +218,7 @@ export function Toolbar() {
       {/* Underline Button */}
       <Button 
       onClick={()=> {
-        activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
       }}
       size="sm"
       variant="outline"
@@ -157,7 +229,7 @@ export function Toolbar() {
       {/* Code Button */}
       <Button 
       onClick={()=> {
-        activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
       }}
       size="sm"
       variant="outline"
@@ -168,7 +240,7 @@ export function Toolbar() {
       {/* Strikethrough Button */}
       <Button 
       onClick={()=> {
-        activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
       }}
       size="sm"
       variant="outline"
@@ -179,7 +251,7 @@ export function Toolbar() {
       {/* Superscript Button */}
       <Button 
       onClick={()=> {
-        activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
       }}
       size="sm"
       variant="outline"
@@ -190,7 +262,7 @@ export function Toolbar() {
       {/* Subscript Button */}
       <Button 
       onClick={()=> {
-        activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
       }}
       size="sm"
       variant="outline"
@@ -198,7 +270,11 @@ export function Toolbar() {
       ><Subscript />
       </Button>
       </ButtonGroup>
-            
+      
+      <TextFormatDropDown
+        textFormat={toolbarState.textFormat}
+        editor={editor}
+      />
       </div>
     </div>
   )

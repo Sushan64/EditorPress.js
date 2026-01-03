@@ -41,6 +41,7 @@ export const blockTypeToBlockName = {
 const INITIAL_TOOLBAR_STATE = {
  // bgColor: '#fff',
   blockType: 'paragraph' as keyof typeof blockTypeToBlockName,
+  textFormat: 'left',
   //canRedo: false,
   //canUndo: false,
  // codeLanguage: '',
@@ -66,6 +67,11 @@ const INITIAL_TOOLBAR_STATE = {
 //  isLowercase: false,
 //  isUppercase: false,
  // isCapitalize: false,
+    isLeftAlign: true,
+    isRightAlign: false,
+    isCenterAlign: false,
+    isJustifyAlign: false,
+    
 //  rootType: 'root' as keyof typeof rootTypeToRootName,
  // listStartNumber: null as number | null,
 };
