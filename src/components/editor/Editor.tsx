@@ -9,6 +9,11 @@ import {
   $convertToMarkdownString,
   TRANSFORMERS,
 } from '@lexical/markdown';
+import {
+  TableCellNode,
+  TableNode,
+  TableRowNode,
+} from '@lexical/table';
 import {MarkdownShortcutPlugin} from '@lexical/react/LexicalMarkdownShortcutPlugin';
 
 import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
@@ -17,6 +22,7 @@ import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {LexicalErrorBoundary} from '@lexical/react/LexicalErrorBoundary';
+import { TablePlugin } from '@lexical/react/LexicalTablePlugin'
 
 // Nodes
 import {HeadingNode, QuoteNode} from '@lexical/rich-text';
@@ -46,6 +52,9 @@ export default function Editor() {
       CodeHighlightNode,
       LinkNode,
       AutoLinkNode,
+      TableCellNode,
+      TableNode,
+      TableRowNode,
   ],
     editorState: () => $convertFromMarkdownString(markdown, TRANSFORMERS),
   };
@@ -66,6 +75,7 @@ export default function Editor() {
       <HistoryPlugin />
       <AutoFocusPlugin />
       <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+      <TablePlugin />
     </LexicalComposer>
     </div>
   );

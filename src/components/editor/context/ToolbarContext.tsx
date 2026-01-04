@@ -42,6 +42,7 @@ const INITIAL_TOOLBAR_STATE = {
  // bgColor: '#fff',
   blockType: 'paragraph' as keyof typeof blockTypeToBlockName,
   textFormat: 'left',
+  isInTable: false,
   //canRedo: false,
   //canUndo: false,
  // codeLanguage: '',

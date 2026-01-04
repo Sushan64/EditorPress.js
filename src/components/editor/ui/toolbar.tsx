@@ -6,9 +6,31 @@ import { useToolbarState } from "../context/ToolbarContext.tsx"
 import DropDown, {
   DropDownItem,
 } from "./dropdown.tsx"
-
+import {z} from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import {useForm} from "react-hook-form"
 import {BlockFormatDropDown} from './BlockFormatDropDown.tsx'
 import {TextFormatDropDown} from './TextFormatDropDown.tsx'
+import {Input} from "@/components/ui/input"
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+  FormField,
+} from "@/components/ui/form"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog"
 import {
   Bold,
   Italic,
@@ -24,6 +46,8 @@ import {
   TextAlignEnd,
   TextAlignJustify,
   TextAlignStart,
+  Table,
+  Trash2,
 } from 'lucide-react'
 
 // Lexcial
@@ -43,10 +67,44 @@ import {
   $isRangeSelection,
 } from 'lexical'
 
+import{
+  INSERT_TABLE_COMMAND,
+  $isTableNode,
+}from '@lexical/table'
+
 export function Toolbar() {
   const [editor] = useLexicalComposerContext();
   const {toolbarState, updateToolbarState} = useToolbarState();
-
+  
+  const tableSchema = z.object({
+    row: z.coerce.number().min(1, {message:'Rows cannot be less then 1'}).max(100, {message: "Rows must be less then 100"}).positive(),
+    column: z.coerce.number().min(1, {message:'Columns cannot be less then 1'}).max(100, {message: "Colunm must be less then 100"}).positive(),
+  })
+  
+  const tableForm = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(tableSchema),
+    defaultValues:{
+      row: 5,
+      column: 5,
+    },
+  })
+  
+  const insertTable = (value)=>{
+    editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+      columns: value.column,
+      rows: value.row,
+    });
+    console.log(value)
+    setOpenTableDialog(false)
+    tableForm.reset()
+  }
+  
+  
+  const [tableRow, setTableRow] = useState(1);
+  const [tableColumn, setTableColumn] = useState(1);
+  const [openTableDialog, setOpenTableDialog] = useState(false);
+  
+  
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [isBold, setIsBold] = useState(false);
@@ -61,6 +119,20 @@ export function Toolbar() {
   const [isRightAlign, setIsRightAlign] = useState(false);
   const [isCenterAlign, setIsCenterAlign] = useState(false);
   const [isJustifyAlign, setIsJustifyAlign] = useState(false);
+  
+  const deleteTable = (editor) => {
+    editor.update(() => {
+      const selection = $getSelection();
+      if (!$isRangeSelection(selection)) return;
+      let node = selection.anchor.getNode();
+      while (node && !$isTableNode(node)) {
+        node = node.getParent();
+      }
+      if ($isTableNode(node)) {
+        node.remove();
+      }
+    });
+  };
   
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -119,6 +191,11 @@ export function Toolbar() {
       }
       updateToolbarState("textFormat", textFormat);
       
+      let node = selection.anchor.getNode();
+      while (node && !$isTableNode(node)) {
+        node = node.getParent();
+      }
+      updateToolbarState('isInTable', $isTableNode(node));
       }}, []);
  
   useEffect(() => {
@@ -275,6 +352,70 @@ export function Toolbar() {
         textFormat={toolbarState.textFormat}
         editor={editor}
       />
+      
+      <ButtonGroup>
+      <Dialog open={openTableDialog} onOpenChange={()=>{
+        tableForm.reset()
+        setOpenTableDialog(!openTableDialog)
+      }}>
+        <DialogTrigger asChild>
+          <Button size="sm" variant="outline">
+            <Table />
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add a Table</DialogTitle>
+          </DialogHeader>
+          <Form {...tableForm}>
+            <form onSubmit={tableForm.handleSubmit(insertTable)} className="space-y-4">
+              <FormField
+              control={tableForm.control}
+              name="row"
+              render={({field})=>(
+                <FormItem>
+                  <FormLabel>Rows</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field}/>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+              />
+              
+              <FormField
+                control={tableForm.control}
+                name="column"
+                render={({ field })=>(
+                  <FormItem>
+                    <FormLabel>Columns</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field}/>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter className="mt-4">
+              <DialogClose asChild>
+                <Button variant="outline" onClick={()=> tableForm.reset()}>Cancel</Button>
+              </DialogClose>
+                <Button type="submit">Insert</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+      
+      <Button
+      size="sm"
+      variant="destructive"
+      disabled={!toolbarState.isInTable}
+      onClick={()=>deleteTable(editor)}
+      >
+        <Trash2 />
+      </Button>
+      </ButtonGroup>
       </div>
     </div>
   )

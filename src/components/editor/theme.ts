@@ -1,6 +1,10 @@
 export const theme = {
   paragraph: 'editor-paragraph',
   quote: 'editor-quote',
+  table: 'block max-w-full overflow-x-auto border-collapse border border-muted my-4 overscroll-x-contain',
+  tableRow: 'border border-muted',
+  tableCell: 'border border-muted p-2 min-w-[120px] align-top',
+  tableCellHeader: 'border border-muted bg-muted/60 font-semibold p-2',
   heading: {
     h1: 'scroll-m-20 text-4xl font-extrabold tracking-tight text-balance',
     h2: 'scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0',
