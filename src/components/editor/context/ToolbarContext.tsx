@@ -59,7 +59,7 @@ const INITIAL_TOOLBAR_STATE = {
  // isHighlight: false,
  // isImageCaption: false,
   isItalic: false,
- // isLink: false,
+  isLink: false,
 //  isRTL: false,
   isStrikethrough: false,
   isSubscript: false,

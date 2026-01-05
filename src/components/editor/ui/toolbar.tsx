@@ -48,6 +48,8 @@ import {
   TextAlignStart,
   Table,
   Trash2,
+  Link2,
+  Link2Off,
 } from 'lucide-react'
 
 // Lexcial
@@ -71,9 +73,13 @@ import{
   INSERT_TABLE_COMMAND,
   $isTableNode,
 }from '@lexical/table'
+import {$isLinkNode, TOGGLE_LINK_COMMAND} from '@lexical/link';
+import {getSelectedNode} from '../utils/getSelectedNode.ts'
+import {sanitizeUrl} from '../utils/url.ts';
 
-export function Toolbar() {
+export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
   const [editor] = useLexicalComposerContext();
+  const [activeEditor, setActiveEditor] = useState(editor);
   const {toolbarState, updateToolbarState} = useToolbarState();
   
   const tableSchema = z.object({
@@ -104,7 +110,7 @@ export function Toolbar() {
   const [tableColumn, setTableColumn] = useState(1);
   const [openTableDialog, setOpenTableDialog] = useState(false);
   
-  
+
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [isBold, setIsBold] = useState(false);
@@ -133,6 +139,24 @@ export function Toolbar() {
       }
     });
   };
+  
+  const insertLink = useCallback(() => {
+    if (!toolbarState.isLink) {
+      setIsLinkEditMode(true);
+      editor.getEditorState().read(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection) && !selection.isCollapsed()) {
+          activeEditor.dispatchCommand(
+            TOGGLE_LINK_COMMAND,
+            sanitizeUrl('https://'),
+          );
+        }
+      });
+    } else {
+      setIsLinkEditMode(false);
+      activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+    }
+  }, [activeEditor, editor, setIsLinkEditMode, toolbarState.isLink]);
   
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -196,7 +220,12 @@ export function Toolbar() {
         node = node.getParent();
       }
       updateToolbarState('isInTable', $isTableNode(node));
-      }}, []);
+      
+      const linkNode = getSelectedNode(selection);
+      const parent = linkNode.getParent();
+      const isLink = $isLinkNode(parent) || $isLinkNode(linkNode);
+      updateToolbarState('isLink', isLink);
+    }}, []);
  
   useEffect(() => {
     return mergeRegister(
@@ -212,7 +241,11 @@ export function Toolbar() {
     editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
         (_payload, _newEditor) => {
+          setActiveEditor(_newEditor)
+          _newEditor.getEditorState().read(() => {
           $updateToolbar();
+        });
+          
           return false;
         },
         COMMAND_PRIORITY_LOW,
@@ -416,6 +449,18 @@ export function Toolbar() {
         <Trash2 />
       </Button>
       </ButtonGroup>
+      
+      <Button
+      variant="outline"
+      size="sm"
+      onClick={insertLink}
+      >
+        {!toolbarState.isLink ? (
+        <Link2 />
+        ) :(
+        <Link2Off />
+        )}
+      </Button>
       </div>
     </div>
   )

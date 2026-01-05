@@ -1,8 +1,9 @@
 import {$getRoot, $getSelection} from 'lexical';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 
 import {theme} from "./theme.ts"
 import { Toolbar } from  "./ui/toolbar.tsx"
+import {validateUrl} from './utils/url.ts';
 
 import {
   $convertFromMarkdownString,
@@ -22,7 +23,9 @@ import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {LexicalErrorBoundary} from '@lexical/react/LexicalErrorBoundary';
+import {LinkPlugin} from '@lexical/react/LexicalLinkPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin'
+import FloatingLinkEditorPlugin from "./plugins/FloatingLinkEditorPlugin/index.tsx"
 
 // Nodes
 import {HeadingNode, QuoteNode} from '@lexical/rich-text';
@@ -39,6 +42,15 @@ function onError(error: any) {
 
 const markdown = ""
 export default function Editor() {
+  
+  const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
+  const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+  
+  const onRef = (_floatingAnchorElem: HTMLDivElement) => {
+    if (_floatingAnchorElem !== null) {
+      setFloatingAnchorElem(_floatingAnchorElem);
+    }
+  };
   const initialConfig = {
     namespace: 'MyEditor',
     theme: theme,
@@ -62,13 +74,15 @@ export default function Editor() {
   return (
     <div className="w-full max-w-2xl bg-white p-6 space-y-4">
     <LexicalComposer initialConfig={initialConfig}>
-      <Toolbar />
+      <Toolbar setIsLinkEditMode={setIsLinkEditMode} />
       <RichTextPlugin
         contentEditable={
-          <ContentEditable
-            aria-placeholder={'Enter some text...'}
-            className="focus:outline-none h-1/2"
-          />
+                <div className="relative" ref={onRef}>
+                  <ContentEditable
+                    aria-placeholder={'Enter some text...'}
+                    className="outline-none"
+                  />
+                </div>
         }
         ErrorBoundary={LexicalErrorBoundary}
       />
@@ -76,6 +90,20 @@ export default function Editor() {
       <AutoFocusPlugin />
       <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
       <TablePlugin />
+      <LinkPlugin
+      validateUrl={validateUrl}
+      attributes={
+          {
+              rel: 'noopener noreferrer',
+              target: '_blank',
+            }
+      } />
+    {floatingAnchorElem && (
+      <FloatingLinkEditorPlugin
+      anchorElem={floatingAnchorElem}
+      isLinkEditMode={isLinkEditMode}
+      setIsLinkEditMode={setIsLinkEditMode} />
+    )}
     </LexicalComposer>
     </div>
   );

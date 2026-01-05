@@ -25,7 +25,7 @@ export const theme = {
   },
   hashtag: 'editor-hashtag',
   image: 'editor-image',
-  link: 'editor-link',
+  link: 'underline',
   text: {
     bold: 'bold',
     code: 'editor-textCode',
