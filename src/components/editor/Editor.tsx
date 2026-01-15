@@ -32,7 +32,7 @@ import {HeadingNode, QuoteNode} from '@lexical/rich-text';
 import {ListItemNode, ListNode} from '@lexical/list';
 import {CodeHighlightNode, CodeNode} from '@lexical/code';
 import {AutoLinkNode, LinkNode} from '@lexical/link';
-
+import {ImageNode} from './nodes/ImageNode.tsx'
 // Catch any errors that occur during Lexical updates and log them
 // or throw them as needed. If you don't throw them, Lexical will
 // try to recover gracefully without losing user data.
@@ -67,6 +67,7 @@ export default function Editor() {
       TableCellNode,
       TableNode,
       TableRowNode,
+      ImageNode,
   ],
     editorState: () => $convertFromMarkdownString(markdown, TRANSFORMERS),
   };

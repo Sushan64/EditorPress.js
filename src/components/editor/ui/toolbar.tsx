@@ -12,6 +12,7 @@ import {useForm} from "react-hook-form"
 import {BlockFormatDropDown} from './BlockFormatDropDown.tsx'
 import {TextFormatDropDown} from './TextFormatDropDown.tsx'
 import {Input} from "@/components/ui/input"
+import ImagePlugin from "../plugins/ImagePlugin.tsx";
 import {
   Form,
   FormItem,
@@ -461,6 +462,8 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
         <Link2Off />
         )}
       </Button>
+      
+      <ImagePlugin />
       </div>
     </div>
   )
