@@ -1,3 +1,5 @@
+import './editor.css'
+
 export const theme = {
   paragraph: 'editor-paragraph',
   quote: 'editor-quote',
@@ -36,37 +38,36 @@ export const theme = {
     underline: 'underline',
     underlineStrikethrough: 'editor-textUnderlineStrikethrough',
   },
-  code: 'editor-code',
+  code: "editorCode",
   codeHighlight: {
-    atrule: 'editor-tokenAttr',
-    attr: 'editor-tokenAttr',
-    boolean: 'editor-tokenProperty',
-    builtin: 'editor-tokenSelector',
-    cdata: 'editor-tokenComment',
-    char: 'editor-tokenSelector',
-    class: 'editor-tokenFunction',
-    'class-name': 'editor-tokenFunction',
-    comment: 'editor-tokenComment',
-    constant: 'editor-tokenProperty',
-    deleted: 'editor-tokenProperty',
-    doctype: 'editor-tokenComment',
-    entity: 'editor-tokenOperator',
-    function: 'editor-tokenFunction',
-    important: 'editor-tokenVariable',
-    inserted: 'editor-tokenSelector',
-    keyword: 'editor-tokenAttr',
-    namespace: 'editor-tokenVariable',
-    number: 'editor-tokenProperty',
-    operator: 'editor-tokenOperator',
-    prolog: 'editor-tokenComment',
-    property: 'editor-tokenProperty',
-    punctuation: 'editor-tokenPunctuation',
-    regex: 'editor-tokenVariable',
-    selector: 'editor-tokenSelector',
-    string: 'editor-tokenSelector',
-    symbol: 'editor-tokenProperty',
-    tag: 'editor-tokenProperty',
-    url: 'editor-tokenOperator',
-    variable: 'editor-tokenVariable',
+    atrule: "editorTokenAttr",
+    attr: "editorTokenAttr",
+    boolean: "editorTokenProperty",
+    builtin: "editorTokenSelector",
+    cdata: "editorTokenComment",
+    char: "editorTokenSelector",
+    class: "editorTokenFunction", // class constructor
+    comment: "editorTokenComment", // comment
+    constant: "editorTokenProperty",
+    deleted: "editorTokenProperty",
+    doctype: "editorTokenComment",
+    entity: "editorTokenOperator",
+    function: "editorTokenFunction", // es5 function
+    important: "editorTokenVariable",
+    inserted: "editorTokenSelector",
+    keyword: "editorTokenAttr", // variable keyword like const/let
+    namespace: "editorTokenVariable",
+    number: "editorTokenProperty", // number values
+    operator: "editorTokenOperator", // operator like +/*-
+    prolog: "editorTokenComment",
+    property: "editorTokenProperty",
+    punctuation: "editorTokenPunctuation", // brackets of array, object
+    regex: "editorTokenVariable",
+    selector: "editorTokenSelector",
+    string: "editorTokenSelector", // string values
+    symbol: "editorTokenProperty",
+    tag: "editorTokenProperty",
+    url: "editorTokenOperator",
+    variable: "editorTokenVariable",
   },
 };

@@ -3,6 +3,7 @@ import {Button} from "@/components/ui/button"
 import {ButtonGroup, ButtonGroupSeparator} from "@/components/ui/button-group"
 import {Toggle} from "@/components/ui/toggle"
 import { useToolbarState } from "../context/ToolbarContext.tsx"
+import { $isCodeNode, getDefaultCodeLanguage } from "@lexical/code";
 import DropDown, {
   DropDownItem,
 } from "./dropdown.tsx"
@@ -77,12 +78,15 @@ import{
 import {$isLinkNode, TOGGLE_LINK_COMMAND} from '@lexical/link';
 import {getSelectedNode} from '../utils/getSelectedNode.ts'
 import {sanitizeUrl} from '../utils/url.ts';
+import CodeBlockPlugin from '../plugins/CodeBlockPlugin.tsx'
 
 export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const {toolbarState, updateToolbarState} = useToolbarState();
-  
+  const [codeLanguage, setCodeLanguage] = useState(getDefaultCodeLanguage());
+  const [selectedElementKey, setSelectedElementKey] = useState("");
+
   const tableSchema = z.object({
     row: z.coerce.number().min(1, {message:'Rows cannot be less then 1'}).max(100, {message: "Rows must be less then 100"}).positive(),
     column: z.coerce.number().min(1, {message:'Columns cannot be less then 1'}).max(100, {message: "Colunm must be less then 100"}).positive(),
@@ -176,7 +180,12 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
       
       
       const anchorNode = selection.anchor.getNode();
-      const element = anchorNode.getTopLevelElementOrThrow();
+      const element =
+        anchorNode.getKey() === "root"
+          ? anchorNode
+          : anchorNode.getTopLevelElementOrThrow();
+      const elementKey = element.getKey()
+      setSelectedElementKey(elementKey);
       const elementType = element.getType();
       const elementFormat = element.getFormatType();
       const elementTag = element.getTag ? element.getTag() : null;
@@ -193,6 +202,9 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
           blockType = element.getListType();
           break
         case "code":
+          if ($isCodeNode(element)) {
+          setCodeLanguage(element.getLanguage() || getDefaultCodeLanguage());
+        }
           blockType = "code";
           break
         default:
@@ -464,6 +476,10 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
       </Button>
       
       <ImagePlugin />
+      <CodeBlockPlugin 
+        codeLanguage={codeLanguage}
+        blockType={toolbarState.blockType}
+        selectedElementKey={selectedElementKey}/>
       </div>
     </div>
   )

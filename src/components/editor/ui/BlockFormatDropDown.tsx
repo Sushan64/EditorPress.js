@@ -10,7 +10,7 @@ import { $setBlocksType } from "@lexical/selection";
 import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text";
 import { $createCodeNode } from "@lexical/code";
 
-import DropDown, { DropDownItem } from "./dropdown";
+import DropDown, { DropDownItem } from "./dropdown.tsx";
 import { ChevronDown } from "lucide-react";
 
 export function BlockFormatDropDown({ editor, blockType }) {

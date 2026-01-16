@@ -1,7 +1,7 @@
 import {$getRoot, $getSelection} from 'lexical';
 import {useEffect, useState} from 'react';
 
-import {theme} from "./theme.ts"
+import {theme} from "./theme/index.ts"
 import { Toolbar } from  "./ui/toolbar.tsx"
 import {validateUrl} from './utils/url.ts';
 
