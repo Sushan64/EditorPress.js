@@ -1,6 +1,6 @@
 import {$getRoot, $getSelection} from 'lexical';
 import {useEffect, useState} from 'react';
-
+import {Button} from '@/components/ui/button'
 import {theme} from "./theme/index.ts"
 import { Toolbar } from  "./ui/toolbar.tsx"
 import {validateUrl} from './utils/url.ts';
@@ -10,12 +10,15 @@ import {
   $convertToMarkdownString,
   TRANSFORMERS,
 } from '@lexical/markdown';
+import { $generateHtmlFromNodes } from '@lexical/html';
+
 import {
   TableCellNode,
   TableNode,
   TableRowNode,
 } from '@lexical/table';
 import {MarkdownShortcutPlugin} from '@lexical/react/LexicalMarkdownShortcutPlugin';
+import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 
 import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
@@ -40,7 +43,9 @@ function onError(error: any) {
   console.error(error);
 }
 
-const markdown = ""
+
+
+const defaultContent = localStorage.getItem('content') || ""
 export default function Editor() {
   
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
@@ -69,11 +74,11 @@ export default function Editor() {
       TableRowNode,
       ImageNode,
   ],
-    editorState: () => $convertFromMarkdownString(markdown, TRANSFORMERS),
+    editorState: defaultContent || undefined,
   };
 
   return (
-    <div className="w-full max-w-2xl bg-white p-6 space-y-4">
+    <div className="relative w-full max-w-2xl bg-white p-6 space-y-4">
     <LexicalComposer initialConfig={initialConfig}>
       <Toolbar setIsLinkEditMode={setIsLinkEditMode} />
       <RichTextPlugin
@@ -106,6 +111,7 @@ export default function Editor() {
       setIsLinkEditMode={setIsLinkEditMode} />
     )}
     </LexicalComposer>
+   
     </div>
   );
 }

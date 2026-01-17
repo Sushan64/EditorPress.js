@@ -8,6 +8,7 @@ import DropDown, {
   DropDownItem,
 } from "./dropdown.tsx"
 import {z} from "zod"
+import {toast} from 'sonner'
 import { zodResolver } from "@hookform/resolvers/zod"
 import {useForm} from "react-hook-form"
 import {BlockFormatDropDown} from './BlockFormatDropDown.tsx'
@@ -52,6 +53,7 @@ import {
   Trash2,
   Link2,
   Link2Off,
+  Save,
 } from 'lucide-react'
 
 // Lexcial
@@ -87,6 +89,13 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
   const [codeLanguage, setCodeLanguage] = useState(getDefaultCodeLanguage());
   const [selectedElementKey, setSelectedElementKey] = useState("");
 
+  const saveContent = ()=> {
+    const editorState = editor.getEditorState();
+    const json = JSON.stringify(editorState.toJSON());
+    localStorage.setItem('content', json);
+    toast.success('Saved!')
+  }
+  
   const tableSchema = z.object({
     row: z.coerce.number().min(1, {message:'Rows cannot be less then 1'}).max(100, {message: "Rows must be less then 100"}).positive(),
     column: z.coerce.number().min(1, {message:'Columns cannot be less then 1'}).max(100, {message: "Colunm must be less then 100"}).positive(),
@@ -286,8 +295,9 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
 
 
   return (
-    <div className="overflow-x-scroll">
-      <div className="space-x-3 flex">
+    <div className="overflow-x-scroll flex items-center">
+      <div className="flex">
+        <div className="space-x-3 flex mr-10">
         <ButtonGroup>
         <Button
         disabled={!canUndo}
@@ -480,6 +490,12 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
         codeLanguage={codeLanguage}
         blockType={toolbarState.blockType}
         selectedElementKey={selectedElementKey}/>
+      </div>
+      <div className="absolute right-0 bg-background px-2">
+        <Button variant="outline" onClick={saveContent} size="sm">
+        <Save size={20} />
+      </Button>
+      </div>
       </div>
     </div>
   )
