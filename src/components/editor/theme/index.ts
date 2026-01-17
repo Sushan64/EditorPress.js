@@ -19,8 +19,8 @@ export const theme = {
     nested: {
       listitem: 'editor-nested-listitem',
     },
-    ol: 'ol',
-    ul: 'ul',
+    ol: 'list-decimal',
+    ul: 'list-disc',
     listitem: 'editor-listItem',
     listitemChecked: 'editor-listItemChecked',
     listitemUnchecked: 'editor-listItemUnchecked',
