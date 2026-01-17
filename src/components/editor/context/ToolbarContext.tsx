@@ -10,6 +10,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import {getDefaultCodeLanguage } from "@lexical/code";
 
 export const MIN_ALLOWED_FONT_SIZE = 8;
 export const MAX_ALLOWED_FONT_SIZE = 72;
@@ -41,9 +42,11 @@ export const blockTypeToBlockName = {
 const INITIAL_TOOLBAR_STATE = {
  // bgColor: '#fff',
   blockType: 'paragraph' as keyof typeof blockTypeToBlockName,
-  textFormat: 'left',
   isInTable: false,
-  //canRedo: false,
+  isCodeBlock: false,
+  selectedElementKey: "",
+  codeLanguage: getDefaultCodeLanguage(),
+  selectedLanguage: 'javascript',
   //canUndo: false,
  // codeLanguage: '',
   //codeTheme: '',
@@ -54,24 +57,13 @@ const INITIAL_TOOLBAR_STATE = {
   fontSize: `${DEFAULT_FONT_SIZE}px`,
   // Font size input value - for controlled input
   //fontSizeInputValue: `${DEFAULT_FONT_SIZE}`,
-  isBold: false,
-  isCode: false,
  // isHighlight: false,
  // isImageCaption: false,
-  isItalic: false,
   isLink: false,
 //  isRTL: false,
-  isStrikethrough: false,
-  isSubscript: false,
-  isSuperscript: false,
-  isUnderline: false,
 //  isLowercase: false,
 //  isUppercase: false,
  // isCapitalize: false,
-    isLeftAlign: true,
-    isRightAlign: false,
-    isCenterAlign: false,
-    isJustifyAlign: false,
     
 //  rootType: 'root' as keyof typeof rootTypeToRootName,
  // listStartNumber: null as number | null,

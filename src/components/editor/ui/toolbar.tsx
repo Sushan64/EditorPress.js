@@ -45,10 +45,6 @@ import {
   Superscript,
   Undo,
   Redo,
-  TextAlignCenter,
-  TextAlignEnd,
-  TextAlignJustify,
-  TextAlignStart,
   Table,
   Trash2,
   Link2,
@@ -81,14 +77,16 @@ import {$isLinkNode, TOGGLE_LINK_COMMAND} from '@lexical/link';
 import {getSelectedNode} from '../utils/getSelectedNode.ts'
 import {sanitizeUrl} from '../utils/url.ts';
 import CodeBlockPlugin from '../plugins/CodeBlockPlugin.tsx'
+import BasicBlockPlugin from '../plugins/BasicBlockPlugin.tsx'
+import TextAlignmentPlugin from '../plugins/TextAlignmentPlugin.tsx'
+import BlockTypePlugin from '../plugins/BlockTypePlugin.tsx'
+
 
 export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const {toolbarState, updateToolbarState} = useToolbarState();
-  const [codeLanguage, setCodeLanguage] = useState(getDefaultCodeLanguage());
-  const [selectedElementKey, setSelectedElementKey] = useState("");
-
+  
   const saveContent = ()=> {
     const editorState = editor.getEditorState();
     const json = JSON.stringify(editorState.toJSON());
@@ -127,13 +125,6 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
-  const [isBold, setIsBold] = useState(false);
-  const [isItalic, setIsItalic] = useState(false);
-  const [isUnderline, setIsUnderline] = useState(false);
-  const [isCode, setIsCode] = useState(false);
-  const [isStrikethrough, setIsStrikethrough] = useState(false);
-  const [isSuperscript, setIsSuperscript] = useState(false);
-  const [isSubscript, setIsSubscript] = useState(false);
   const [isHighlight, setIsHighlight] = useState(false);
   const [isLeftAlign, setIsLeftAlign] = useState(false);
   const [isRightAlign, setIsRightAlign] = useState(false);
@@ -175,68 +166,8 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
-      updateToolbarState('isBold', selection.hasFormat('bold'));
-      updateToolbarState('isItalic', selection.hasFormat('italic'));
-      updateToolbarState('isUnderline', selection.hasFormat('underline'));
-      updateToolbarState(
-        'isStrikethrough',
-        selection.hasFormat('strikethrough'),
-      );
-      updateToolbarState('isSubscript', selection.hasFormat('subscript'));
-      updateToolbarState('isSuperscript', selection.hasFormat('superscript'));
       updateToolbarState('isHighlight', selection.hasFormat('highlight'));
-      updateToolbarState('isCode', selection.hasFormat('code'));
-      
-      
-      const anchorNode = selection.anchor.getNode();
-      const element =
-        anchorNode.getKey() === "root"
-          ? anchorNode
-          : anchorNode.getTopLevelElementOrThrow();
-      const elementKey = element.getKey()
-      setSelectedElementKey(elementKey);
-      const elementType = element.getType();
-      const elementFormat = element.getFormatType();
-      const elementTag = element.getTag ? element.getTag() : null;
-      
-      let blockType;
-      switch (elementType){
-        case "heading":
-          blockType = elementTag; 
-          break
-        case "quote":
-          blockType ="quote";
-          break
-        case "list":
-          blockType = element.getListType();
-          break
-        case "code":
-          if ($isCodeNode(element)) {
-          setCodeLanguage(element.getLanguage() || getDefaultCodeLanguage());
-        }
-          blockType = "code";
-          break
-        default:
-          blockType = "paragraph"
-      }
-      updateToolbarState("blockType", blockType);
-    
-      let textFormat;
-      switch (elementFormat){
-        case 'right':
-          textFormat = "right";
-          break
-        case "center":
-          textFormat = "center";
-          break
-        case "justify":
-          textFormat = "justify";
-          break
-        default:
-          textFormat = "left";
-      }
-      updateToolbarState("textFormat", textFormat);
-      
+
       let node = selection.anchor.getNode();
       while (node && !$isTableNode(node)) {
         node = node.getParent();
@@ -259,21 +190,7 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
           {editor},
         );
       }),
-
-    editor.registerCommand(
-        SELECTION_CHANGE_COMMAND,
-        (_payload, _newEditor) => {
-          setActiveEditor(_newEditor)
-          _newEditor.getEditorState().read(() => {
-          $updateToolbar();
-        });
-          
-          return false;
-        },
-        COMMAND_PRIORITY_LOW,
-      ),
       
-    
     editor.registerCommand(
         CAN_UNDO_COMMAND,
         (payload) => {
@@ -320,94 +237,15 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
         <Redo />
       </Button>
         </ButtonGroup>
-        <BlockFormatDropDown
-        blockType={toolbarState.blockType}
-        rootType={toolbarState.rootType}
-        editor={editor}
-        />
         
-      <ButtonGroup>
-      {/* Bold Button */}
-      <Button 
-      onClick={()=> {
-        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
-      }}
-      size="sm"
-      variant="outline"
-      className={toolbarState.isBold ? "bg-muted": ""}
-      ><Bold /></Button>
-      
-      {/* Italic Button */}
-      <Button
-      onClick={()=> {
-        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
-      }}
-      size="sm"
-      className={toolbarState.isItalic ? "bg-muted": ""}
-      variant="outline"
-      
-      ><Italic /></Button>
-      
-      {/* Underline Button */}
-      <Button 
-      onClick={()=> {
-        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
-      }}
-      size="sm"
-      variant="outline"
-      className={toolbarState.isUnderline ? "bg-muted": ""}
-      ><Underline />
-      </Button>
-          
-      {/* Code Button */}
-      <Button 
-      onClick={()=> {
-        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
-      }}
-      size="sm"
-      variant="outline"
-      className={toolbarState.isCode ? "bg-muted": ""}
-      ><Code />
-      </Button>
-      
-      {/* Strikethrough Button */}
-      <Button 
-      onClick={()=> {
-        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
-      }}
-      size="sm"
-      variant="outline"
-      className={toolbarState.isStrikethrough ? "bg-muted": ""}
-      ><Strikethrough />
-      </Button>
-      
-      {/* Superscript Button */}
-      <Button 
-      onClick={()=> {
-        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
-      }}
-      size="sm"
-      variant="outline"
-      className={toolbarState.isSuperscript ? "bg-muted": ""}
-      ><Superscript />
-      </Button>
-      
-      {/* Subscript Button */}
-      <Button 
-      onClick={()=> {
-        editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
-      }}
-      size="sm"
-      variant="outline"
-      className={toolbarState.isSubscript ? "bg-muted": ""}
-      ><Subscript />
-      </Button>
-      </ButtonGroup>
-      
-      <TextFormatDropDown
-        textFormat={toolbarState.textFormat}
-        editor={editor}
-      />
+        <BlockTypePlugin />
+        <CodeBlockPlugin 
+          codeLanguage={toolbarState.codeLanguage}
+          blockType={toolbarState.blockType}
+          selectedElementKey={toolbarState.selectedElementKey}
+        />
+        <BasicBlockPlugin />
+        <TextAlignmentPlugin />
       
       <ButtonGroup>
       <Dialog open={openTableDialog} onOpenChange={()=>{
@@ -486,10 +324,8 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
       </Button>
       
       <ImagePlugin />
-      <CodeBlockPlugin 
-        codeLanguage={codeLanguage}
-        blockType={toolbarState.blockType}
-        selectedElementKey={selectedElementKey}/>
+      
+      
       </div>
       <div className="absolute right-0 bg-background px-2">
         <Button variant="outline" onClick={saveContent} size="sm">

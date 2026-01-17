@@ -1,8 +1,6 @@
-import { Flex, IconButton, Select } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {Button} from '@/components/ui/button'
 import  DropDown,{ DropDownItem} from '../ui/dropdown.tsx'
-import { CodeSquare } from "react-bootstrap-icons";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
   registerCodeHighlighting,
@@ -11,6 +9,7 @@ import {
   $isCodeNode,
 } from "@lexical/code";
 import {Code} from 'lucide-react'
+import { useToolbarState } from "../context/ToolbarContext.tsx"
 import { $getNodeByKey, $getSelection, $isRangeSelection } from "lexical";
 import { $wrapNodes } from "@lexical/selection";
 
@@ -28,7 +27,9 @@ export default function CodeBlockPlugin({
   selectedElementKey,
 }: CodeBlockPluginProps) {
   const [editor] = useLexicalComposerContext();
-  const [selectedLanguage, setSelectedLanguage] = useState('javasript')
+
+  const {toolbarState, updateToolbarState} = useToolbarState();
+
   useEffect(() => {
     registerCodeHighlighting(editor);
   }, [editor]);
@@ -38,7 +39,7 @@ export default function CodeBlockPlugin({
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
         $wrapNodes(selection, () => $createCodeNode());
-        setSelectedLanguage('javascript')
+        updateToolbarState('selectedLanguage', 'javascript')
       }
     });
   };
@@ -49,26 +50,19 @@ export default function CodeBlockPlugin({
       const node = $getNodeByKey(selectedElementKey);
       if ($isCodeNode(node)) {
         node.setLanguage(language);
-        setSelectedLanguage(language)
+        updateToolbarState('selectedLanguage', language)
       }
     });
   };
+  
 
   return (
-    <div className="flex align-center gap-1">
-      <Button
-        aria-label="Add Code Block"
-        size="sm"
-        variant="ghost"
-        onClick={onAddCodeBlock}
-        ><Code/></Button>
-      {blockType === "code" && (
-        <DropDown buttonLabel={selectedLanguage} size="sm" value={codeLanguage}>
+      blockType === "code" && (
+        <DropDown buttonLabel={toolbarState.selectedLanguage} size="sm" value={codeLanguage}>
           {lanugages.map((language) => (
             <DropDownItem key={language} onClick={()=> onLanguageChange(language)} value={language}>{language}</DropDownItem>
           ))}
         </DropDown>
-      )}
-    </div>
+      )
   );
 }
