@@ -55,7 +55,7 @@ export default function BlockTypePlugin() {
       }
     updateToolbarState('blockType', blockType)
     }
-  }, [])
+  }, [updateToolbarState])
   
   
   const formatParagraph = useCallback(() => {
@@ -117,8 +117,7 @@ export default function BlockTypePlugin() {
     h6: "Heading 6",
     quote: "Quote",
     code: "Code Block",
-  }[toolbarState.blockType] ?? "Format";
-
+  }[toolbarState.blockType] ?? "Paragraph";
   return (
     <DropDown
       buttonLabel={currentLabel}
@@ -127,7 +126,7 @@ export default function BlockTypePlugin() {
     >
       <DropDownItem
         onClick={formatParagraph}
-        isActive={toolbarState.blockType === "paragraph"}
+        isActive={currentLabel === "Paragraph"}
       >
         Paragraph
       </DropDownItem>

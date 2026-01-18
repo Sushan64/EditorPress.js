@@ -43,7 +43,7 @@ export default function ImagePlugin() {
       <Button
         aria-label="Add Image"
         size="sm"
-        variant="ghost"
+        variant="outline"
         onClick={() => setIsOpen(true)}
       >
         <ImagePlus/>
@@ -73,7 +73,7 @@ export default function ImagePlugin() {
               placeholder="Add Image URL"
               />
               <Button
-                variant="ghost"
+                variant="outline"
                 className="mt-4"
                 onClick={() => inputRef?.current?.click()}
                 >

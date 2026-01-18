@@ -80,6 +80,7 @@ import CodeBlockPlugin from '../plugins/CodeBlockPlugin.tsx'
 import BasicBlockPlugin from '../plugins/BasicBlockPlugin.tsx'
 import TextAlignmentPlugin from '../plugins/TextAlignmentPlugin.tsx'
 import BlockTypePlugin from '../plugins/BlockTypePlugin.tsx'
+import ListPlugin from '../plugins/ListPlugin.tsx'
 
 
 export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
@@ -246,7 +247,8 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
         />
         <BasicBlockPlugin />
         <TextAlignmentPlugin />
-      
+        <ListPlugin />
+        
       <ButtonGroup>
       <Dialog open={openTableDialog} onOpenChange={()=>{
         tableForm.reset()
@@ -324,7 +326,6 @@ export function Toolbar({isLinkEditMode, setIsLinkEditMode }) {
       </Button>
       
       <ImagePlugin />
-      
       
       </div>
       <div className="absolute right-0 bg-background px-2">

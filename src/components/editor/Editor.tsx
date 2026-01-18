@@ -29,7 +29,7 @@ import {LexicalErrorBoundary} from '@lexical/react/LexicalErrorBoundary';
 import {LinkPlugin} from '@lexical/react/LexicalLinkPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin'
 import FloatingLinkEditorPlugin from "./plugins/FloatingLinkEditorPlugin/index.tsx"
-
+import {ListPlugin} from '@lexical/react/LexicalListPlugin'
 // Nodes
 import {HeadingNode, QuoteNode} from '@lexical/rich-text';
 import {ListItemNode, ListNode} from '@lexical/list';
@@ -96,6 +96,7 @@ export default function Editor() {
       <AutoFocusPlugin />
       <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
       <TablePlugin />
+      <ListPlugin />
       <LinkPlugin
       validateUrl={validateUrl}
       attributes={

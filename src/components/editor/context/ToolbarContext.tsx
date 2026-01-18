@@ -102,11 +102,11 @@ export const ToolbarContext = ({
     },
     [],
   );
-
+/*
   useEffect(() => {
     updateToolbarState('fontSizeInputValue', selectionFontSize.slice(0, -2));
   }, [selectionFontSize, updateToolbarState]);
-
+*/
   const contextValue = useMemo(() => {
     return {
       toolbarState,
