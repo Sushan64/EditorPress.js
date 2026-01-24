@@ -119,4 +119,23 @@
   body {
     @apply bg-background text-foreground;
   }
+  h1{
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight text-balance;
+  }
+  h2{
+    @apply scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0;
+  }
+  h3{
+   @apply scroll-m-20 text-2xl font-semibold tracking-tight;
+  }
+  h4{
+   @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  }
+  h5{
+  @apply scroll-m-20  text-lg font-semibold mb-2 mt-3 text-foreground;
+  } 
+  h6{
+  @apply scroll-m-20 text-base font-semibold mb-2 mt-3 text-foreground;
+  } 
+  
 }

@@ -1,21 +1,32 @@
-import { useState } from 'react'
-import Editor  from '@/components/editor/Editor'
-import { Toaster } from "@/components/ui/sonner"
-import { ToolbarContext } from "@/components/editor/context/ToolbarContext"
+import { useState } from "react";
+import Editor from "@/components/TiptapEditor/editor";
+import { Toaster } from "@/components/ui/sonner";
+import { ToolbarContext } from "@/components/editor/context/ToolbarContext";
 function App() {
-  return (
-    <>
-      <nav className="fixed z-2 w-full px-5 bg-gray-500">
-        <h1 className="text-white text-2xl font-semibold">EditorPress.js <span className="text-sm font-normal underline"><a href="https://github.com/Sushan64" target="_blank">- by Sushan Khatiwada</a></span></h1>
+    return (
+      <div className="h-dvh flex flex-col bg-white">
+      <nav className="bg-white border-b border-gray-200 px-6 py-3 shadow-sm flex-shrink-0">
+        <h1 className="text-gray-900 text-xl font-semibold">
+          EditorPress.js
+          <span className="ml-3 text-sm font-normal text-gray-600">
+            by{' '}
+            <a
+              href="https://github.com/Sushan64"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline hover:text-blue-700"
+            >
+              Sushan Khatiwada
+            </a>
+          </span>
+        </h1>
       </nav>
-      <div className="h-auto min-h-dvh bg-gray-100 flex justify-center p-6">
-      <ToolbarContext>
+      
+        <div className="flex-1 flex flex-col p-3 min-h-0">
         <Editor />
-      </ToolbarContext>
+        </div>
       </div>
-      <Toaster richColors />
-    </>
-  )
+    );
 }
 
-export default App
+export default App;
