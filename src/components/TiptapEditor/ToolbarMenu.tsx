@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import LinkPopover from './LinkPopover.tsx'
 import HeadingSelect from './HeadingSelect.tsx'
+import TablePopover from './TablePopover.tsx'
 
 export default function ToolbarMenu({editor}) {
   if (!editor) return null
@@ -42,6 +43,7 @@ export default function ToolbarMenu({editor}) {
         isLink: ctx.editor.isActive('link') ?? false,
         isBulletList: ctx.editor.isActive('bulletList') ?? false,
         isOrderedList: ctx.editor.isActive('orderedList') ?? false,
+        isTable: ctx.editor.isActive('table') ?? false,
       }
     }
   })
@@ -164,6 +166,16 @@ export default function ToolbarMenu({editor}) {
     <ListOrdered />
   </Button>
   </ButtonGroup>
+  
+  <TablePopover editor={editor}>
+    <Button
+      variant="outline"
+      size="sm"
+      className={editorState.isTable ? "bg-muted": ""}
+    >
+      <Table />
+    </Button>
+  </TablePopover>
   </div>
   )
 }

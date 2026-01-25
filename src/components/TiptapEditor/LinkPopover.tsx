@@ -36,7 +36,6 @@ export default function LinkPopover({editor, children}) {
                     <PopoverTitle>Insert Link</PopoverTitle>
                 </PopoverHeader>
                 <div className="space-y-3">
-                  <Label>Link</Label>
                   <Input
                     required
                     type="link"
