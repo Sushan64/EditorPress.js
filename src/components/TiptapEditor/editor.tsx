@@ -3,9 +3,11 @@ import { useEditor, EditorContent, EditorContext } from "@tiptap/react";
 import { FloatingMenu, BubbleMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
 import Toolbar from "./ToolbarMenu.tsx";
+import Typography from '@tiptap/extension-typography';
 import Link from "@tiptap/extension-link";
 import Superscript from "@tiptap/extension-superscript";
 import Subscript from "@tiptap/extension-subscript";
+import { ListKit } from '@tiptap/extension-list'
 
 export default function Editor() {
     const editor = useEditor({
@@ -18,7 +20,20 @@ export default function Editor() {
                 HTMLAttributes: {
                     class: "underline text-blue-500"
                 }
-            })
+            }),
+            Typography,
+            ListKit.configure({
+              bulletList:{
+                HTMLAttributes: {
+                  class: "list-disc"
+                }
+              },
+              orderedList: {
+                HTMLAttributes: {
+                  class: "list-decimal"
+                }
+              }
+            }),
         ], // define your extension array
         content: "<p>Hello World!</p>", // initial content
         editorProps: {

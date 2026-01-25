@@ -51,7 +51,7 @@ export default function HeadingSelect({ editor }) {
 
     return (
         <Select value={currentValue()} onValueChange={handleChange}>
-            <SelectTrigger>
+            <SelectTrigger size="sm">
                 <SelectValue />
             </SelectTrigger>
             <SelectContent>

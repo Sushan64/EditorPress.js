@@ -40,6 +40,8 @@ export default function ToolbarMenu({editor}) {
         isSuperscript: ctx.editor.isActive('superscript') ?? false,
         isSubscript: ctx.editor.isActive('subscript') ?? false,
         isLink: ctx.editor.isActive('link') ?? false,
+        isBulletList: ctx.editor.isActive('bulletList') ?? false,
+        isOrderedList: ctx.editor.isActive('orderedList') ?? false,
       }
     }
   })
@@ -144,6 +146,24 @@ export default function ToolbarMenu({editor}) {
     </Button>
   </LinkPopover>
   )}
+ <ButtonGroup>
+  <Button
+    variant="outline"
+    size="sm"
+    onClick={()=>editor.chain().focus().toggleBulletList().run()}
+    className = {editorState.isBulletList ? "bg-muted": ""}
+  >
+    <List />
+  </Button>
+  <Button
+    variant="outline"
+    size="sm"
+    onClick={()=>editor.chain().focus().toggleOrderedList().run()}
+    className = {editorState.isOrderedList ? "bg-muted": ""}
+  >
+    <ListOrdered />
+  </Button>
+  </ButtonGroup>
   </div>
   )
 }
