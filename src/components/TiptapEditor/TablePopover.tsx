@@ -43,7 +43,7 @@ function TablePopover({editor, children}) {
   })
   
   const insertTable = (value)=>{
-    editor.chain().focus().insertTable(value).run()
+    editor.chain().insertTable(value).run()
     setShowTablePopover(false)
     tableForm.reset()
   }
