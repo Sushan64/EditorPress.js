@@ -6,7 +6,7 @@ import {
     ChevronDown,
     X,
     CloudUpload,
-    Upload,
+    Upload
 } from "lucide-react";
 import {
     Dialog,
@@ -19,26 +19,19 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import {
-  Collapsible,
-  CollapsibleTrigger,
-  CollapsibleContent
-} from '@/components/ui/collapsible'
-import{
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent
-} from '@/components/ui/tabs'
+    Collapsible,
+    CollapsibleTrigger,
+    CollapsibleContent
+} from "@/components/ui/collapsible";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+function ImageDialog({ editor, children }) {
+    const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
 
-function ImageDialog({editor, children}) {
-    
-    const [isImageDialogOpen, setIsImageDialogOpen] = useState(false)
-  
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [activeTab, setActiveTab] = useState<"upload" | "url">("upload");
     const [url, setUrl] = useState("");
@@ -61,14 +54,22 @@ function ImageDialog({editor, children}) {
     }, [isImageDialogOpen]);
 
     const handleSubmit = () => {
-      if (activeTab === "upload" && file) {
-        const url = URL.createObjectURL(file);
-        editor.chain().focus().setImage({ src: url }).run()
-      } else if (activeTab === "url" && url.trim()) {
-        editor.chain().focus().setImage({ src: url.trim() }).run()
-      }
-      setIsImageDialogOpen(false)
-    }
+        if (activeTab === "upload" && file) {
+            const url = URL.createObjectURL(file);
+            editor.chain().focus().setImage({
+                src: url,
+                caption: caption,
+                alt: alt,
+            }).run();
+        } else if (activeTab === "url" && url.trim()) {
+            editor.chain().focus().setImage({
+              src: url.trim(),
+              caption: caption,
+              alt: alt,
+            }).run();
+        }
+        setIsImageDialogOpen(false);
+    };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Enter" && (activeTab === "url" ? url.trim() : file)) {
@@ -115,9 +116,7 @@ function ImageDialog({editor, children}) {
 
     return (
         <Dialog open={isImageDialogOpen} onOpenChange={setIsImageDialogOpen}>
-          <DialogTrigger asChild>
-            {children}
-          </DialogTrigger>
+            <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <div className="flex items-center gap-2">
@@ -321,5 +320,4 @@ function ImageDialog({editor, children}) {
     );
 }
 
-
-export default memo(ImageDialog)
+export default memo(ImageDialog);
