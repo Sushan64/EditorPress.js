@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, Table, ImagePlus } from "lucide-react";
-import TablePopover from '../TablePopover.tsx'
-import {ListButtons, TextAlignmentButtons} from '../ToolbarMenu.tsx'
+import TablePopover from "../TablePopover.tsx";
+import ImageDialog from "../ImageDialog.tsx";
+import { ListButtons, TextAlignmentButtons } from "../ToolbarMenu.tsx";
 
-function MobileOnlyMoreOption({editor, editorState}) {
+function MobileOnlyMoreOption({ editor, editorState }) {
     return (
         <Sheet>
             <SheetTrigger asChild>
@@ -57,17 +58,19 @@ function MobileOnlyMoreOption({editor, editorState}) {
                                     <Table /> Table
                                 </Button>
                             </TablePopover>
-                            
-                            <Button
-                                size="default"
-                                variant="outline"
-                                className="flex items-center gap-2 hover:bg-accent transition-colors"
-                            >
-                                <ImagePlus className="h-4 w-4" />
-                                <span>Image</span>
-                            </Button>
+
+                            <ImageDialog editor={editor}>
+                                <Button variant="outline">
+                                    <ImagePlus /> Image
+                                </Button>
+                            </ImageDialog>
+
                             <div className="inline-flex items-center gap-2 h-fit rounded-md border border-input bg-background pr-3 hover:bg-accent transition-colors">
-                              <ListButtons editor={editor} editorState={editorState} size="default" />
+                                <ListButtons
+                                    editor={editor}
+                                    editorState={editorState}
+                                    size="default"
+                                />
                                 <span className="text-sm font-medium">
                                     List
                                 </span>
@@ -85,8 +88,11 @@ function MobileOnlyMoreOption({editor, editorState}) {
                                 <div className="text-xs font-medium text-muted-foreground mb-2">
                                     Alignment
                                 </div>
-                                <TextAlignmentButtons editor={editor} editorState={editorState} size="default" />
-                                
+                                <TextAlignmentButtons
+                                    editor={editor}
+                                    editorState={editorState}
+                                    size="default"
+                                />
                             </div>
 
                             <div className="bg-muted/50 rounded-lg p-4">
@@ -97,8 +103,6 @@ function MobileOnlyMoreOption({editor, editorState}) {
                         </div>
                     </div>
                 </div>
-
-                
             </SheetContent>
         </Sheet>
     );

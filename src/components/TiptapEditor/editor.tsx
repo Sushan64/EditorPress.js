@@ -1,3 +1,4 @@
+
 import React, { useMemo } from "react";
 import { useEditor, EditorContent, EditorContext } from "@tiptap/react";
 import { FloatingMenu, BubbleMenu } from "@tiptap/react/menus";
@@ -14,6 +15,13 @@ import { ListKit } from "@tiptap/extension-list";
 import { TableKit } from "@tiptap/extension-table";
 import { Dropcursor } from "@tiptap/extensions";
 import ResizableImage from "./nodes/ResizableImage.tsx";
+import _CodeBlockLowlight from "./nodes/CodeBlockLowlight.tsx"
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { all, createLowlight } from 'lowlight';
+
+import './theme.css'
+
+const lowlight = createLowlight(all)
 
 export default function Editor() {
     const editor = useEditor({
@@ -71,11 +79,16 @@ export default function Editor() {
                 width: 2
             }),
             ResizableImage,
+            CodeBlockLowlight.configure({
+              lowlight,
+              enableTabIndentation: true,
+              tabSize: 2,
+            })
         ], // define your extension array
         content: "<p>Hello World!</p>", // initial content
         editorProps: {
             attributes: {
-                class: "prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none  max-w-none px-8 py-6"
+                class: "prose prose-sm sm:prose lg:prose-lg xl:prose-xl prose-pre:bg-black focus:outline-none  max-w-none px-8 py-6"
             }
         }
     });

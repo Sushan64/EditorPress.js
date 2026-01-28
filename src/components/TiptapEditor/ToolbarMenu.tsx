@@ -25,6 +25,7 @@ import {
     TextAlignJustify,
     TextAlignStart,
     ImagePlus,
+    SquareChevronRight,
 } from "lucide-react";
 import LinkPopover from "./LinkPopover.tsx";
 import HeadingSelect from "./HeadingSelect.tsx";
@@ -119,6 +120,7 @@ export default function ToolbarMenu({ editor }) {
                 isAlignCenter: ctx.editor.isActive({textAlign: "center"}) ?? false,
                 isAlignRight: ctx.editor.isActive({textAlign: "right"}) ?? false,
                 isAlignJustify: ctx.editor.isActive({textAlign: "justify"}) ?? false,
+                isCodeBlock: ctx.editor.isActive('codeBlock') ?? false,
             };
         }
     });
@@ -234,6 +236,16 @@ export default function ToolbarMenu({ editor }) {
                     </Button>
                 </LinkPopover>
             )}
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={()=>editor.chain().focus().toggleCodeBlock().run()}
+              className={editorState.isCodeBlock && "bg-muted"}
+            >
+              <SquareChevronRight />
+            </Button>
+            
             {!isMobile && (
                 <ListButtons editor={editor} editorState={editorState} />
             )}
@@ -242,6 +254,7 @@ export default function ToolbarMenu({ editor }) {
               <TextAlignmentButtons editor={editor} editorState={editorState} />
             )}
             
+            {!isMobile && (
             <ImageDialog editor={editor}>
               <Button
                 variant="outline"
@@ -250,6 +263,7 @@ export default function ToolbarMenu({ editor }) {
                 <ImagePlus />
               </Button>
               </ImageDialog>
+            )}
             
             {!isMobile && (
                 <TablePopover editor={editor}>
