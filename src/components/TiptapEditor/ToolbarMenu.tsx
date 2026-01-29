@@ -236,7 +236,7 @@ export default function ToolbarMenu({ editor }) {
                     </Button>
                 </LinkPopover>
             )}
-            
+            {!isMobile && (
             <Button
               variant="outline"
               size="sm"
@@ -245,6 +245,7 @@ export default function ToolbarMenu({ editor }) {
             >
               <SquareChevronRight />
             </Button>
+            )}
             
             {!isMobile && (
                 <ListButtons editor={editor} editorState={editorState} />

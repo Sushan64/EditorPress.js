@@ -10,7 +10,7 @@ import {
     SheetTrigger
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, Table, ImagePlus } from "lucide-react";
+import { Ellipsis, Table, ImagePlus, SquareChevronRight } from "lucide-react";
 import TablePopover from "../TablePopover.tsx";
 import ImageDialog from "../ImageDialog.tsx";
 import { ListButtons, TextAlignmentButtons } from "../ToolbarMenu.tsx";
@@ -75,6 +75,21 @@ function MobileOnlyMoreOption({ editor, editorState }) {
                                     List
                                 </span>
                             </div>
+                            <Button
+                                variant="outline"
+                                onClick={() =>
+                                    editor
+                                        .chain()
+                                        .focus()
+                                        .toggleCodeBlock()
+                                        .run()
+                                }
+                                className={
+                                    editorState.isCodeBlock && "bg-muted"
+                                }
+                            >
+                                <SquareChevronRight /> Code Block
+                            </Button>
                         </div>
                     </div>
 

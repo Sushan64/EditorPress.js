@@ -15,7 +15,6 @@ import { ListKit } from "@tiptap/extension-list";
 import { TableKit } from "@tiptap/extension-table";
 import { Dropcursor } from "@tiptap/extensions";
 import ResizableImage from "./nodes/ResizableImage.tsx";
-import _CodeBlockLowlight from "./nodes/CodeBlockLowlight.tsx"
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { all, createLowlight } from 'lowlight';
 
