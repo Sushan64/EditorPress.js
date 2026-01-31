@@ -16,6 +16,7 @@ import { TableKit } from "@tiptap/extension-table";
 import { Dropcursor } from "@tiptap/extensions";
 import ResizableImage from "./nodes/ResizableImage.tsx";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import CodeBlockHighlight from './nodes/CodeBlockHighlight.tsx'
 import { all, createLowlight } from 'lowlight';
 
 import './theme.css'
@@ -72,16 +73,12 @@ export default function Editor() {
             TextAlign.configure({
                 types: ["heading", "paragraph", "image"]
             }),
-            Dropcursor.configure({
-                class: "bg-red-500",
-                color: "#ff0000",
-                width: 2
-            }),
             ResizableImage,
-            CodeBlockLowlight.configure({
+            CodeBlockHighlight.configure({
               lowlight,
               enableTabIndentation: true,
               tabSize: 2,
+              defaultLanguage: 'javascript',
             })
         ], // define your extension array
         content: "<p>Hello World!</p>", // initial content
