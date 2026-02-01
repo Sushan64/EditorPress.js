@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Ellipsis, Table, ImagePlus, SquareChevronRight } from "lucide-react";
 import TablePopover from "../TablePopover.tsx";
 import ImageDialog from "../ImageDialog.tsx";
+import FontSizeSelect from "../FontSizeSelect.tsx";
+
 import { ListButtons, TextAlignmentButtons } from "../ToolbarMenu.tsx";
 
 function MobileOnlyMoreOption({ editor, editorState }) {
@@ -114,6 +116,7 @@ function MobileOnlyMoreOption({ editor, editorState }) {
                                 <div className="text-xs font-medium text-muted-foreground mb-2">
                                     Block Format
                                 </div>
+                              <FontSizeSelect editor={editor} size="default" />
                             </div>
                         </div>
                     </div>

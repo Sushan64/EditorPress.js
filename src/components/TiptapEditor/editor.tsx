@@ -18,7 +18,7 @@ import ResizableImage from "./nodes/ResizableImage.tsx";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import CodeBlockHighlight from './nodes/CodeBlockHighlight.tsx'
 import { all, createLowlight } from 'lowlight';
-
+import { TextStyle, FontSize } from '@tiptap/extension-text-style'
 import './theme.css'
 
 const lowlight = createLowlight(all)
@@ -79,7 +79,9 @@ export default function Editor() {
               enableTabIndentation: true,
               tabSize: 2,
               defaultLanguage: 'javascript',
-            })
+            }),
+            TextStyle,
+            FontSize,
         ], // define your extension array
         content: "<p>Hello World!</p>", // initial content
         editorProps: {

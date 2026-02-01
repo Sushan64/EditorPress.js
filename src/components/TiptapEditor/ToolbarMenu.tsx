@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import LinkPopover from "./LinkPopover.tsx";
 import HeadingSelect from "./HeadingSelect.tsx";
+import FontSizeSelect from "./FontSizeSelect.tsx";
 import TablePopover from "./TablePopover.tsx";
 import ImageDialog from "./ImageDialog.tsx";
 import MoreOptions from "./mobileOnly/MoreOptions.tsx";
@@ -213,6 +214,7 @@ export default function ToolbarMenu({ editor }) {
                     <Subscript />
                 </Button>
             </ButtonGroup>
+             {!isMobile && <FontSizeSelect editor={editor} /> }
             {editorState.isLink ? (
                 <Button
                     variant="outline"
