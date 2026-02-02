@@ -23,6 +23,7 @@ import './theme.css'
 
 const lowlight = createLowlight(all)
 
+const editorContent = JSON.parse(localStorage.getItem('editorContent')) || ''
 export default function Editor() {
     const editor = useEditor({
         extensions: [
@@ -83,7 +84,7 @@ export default function Editor() {
             TextStyle,
             FontSize,
         ], // define your extension array
-        content: "<p>Hello World!</p>", // initial content
+        content: editorContent, // initial content
         editorProps: {
             attributes: {
                 class: "prose prose-sm sm:prose lg:prose-lg xl:prose-xl prose-pre:bg-black focus:outline-none  max-w-none px-8 py-6"

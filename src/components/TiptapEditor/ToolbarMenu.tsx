@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useMemo, useEffect} from "react";
 import { useEditorState } from "@tiptap/react";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -34,6 +34,8 @@ import TablePopover from "./TablePopover.tsx";
 import ImageDialog from "./ImageDialog.tsx";
 import MoreOptions from "./mobileOnly/MoreOptions.tsx";
 import { useIsMobile } from "@/hooks/use-mobile.ts";
+import { toast } from "sonner";
+import { useDebouncedCallback } from 'use-debounce';
 
 export function ListButtons({ editor, editorState, size = "sm" }) {
     return (
@@ -100,6 +102,25 @@ export function TextAlignmentButtons({editor, editorState, size="sm" }) {
 export default function ToolbarMenu({ editor }) {
     if (!editor) return null;
     const isMobile = useIsMobile();
+    
+    const handleSave = useDebouncedCallback(
+      () => {
+        localStorage.setItem('editorContent', JSON.stringify(editor.getJSON()))
+        toast.success("Content Saved!")
+       },
+      3000
+    );
+    
+    useEffect(()=>{
+      const updateHandler = ()=>{
+        handleSave();
+      }
+      editor.on('update', updateHandler)
+      return ()=>{
+        editor.off('update', updateHandler)
+      }
+    }, [editor, handleSave])
+    
     const editorState = useEditorState({
         editor,
         selector: ctx => {
@@ -127,6 +148,13 @@ export default function ToolbarMenu({ editor }) {
     });
     return (
         <div className="flex items-center gap-2 bg-gray-50 border-b border-gray-300 p-2 overflow-scroll">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={()=> handleSave.flush()}
+          >
+            <Save />
+          </Button>
             <ButtonGroup>
                 <Button
                     variant="outline"
