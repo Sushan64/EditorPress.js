@@ -1,4 +1,3 @@
-
 import React, { useMemo } from "react";
 import { useEditor, EditorContent, EditorContext } from "@tiptap/react";
 import { FloatingMenu, BubbleMenu } from "@tiptap/react/menus";
@@ -13,21 +12,42 @@ import Superscript from "@tiptap/extension-superscript";
 import Subscript from "@tiptap/extension-subscript";
 import { ListKit } from "@tiptap/extension-list";
 import { TableKit } from "@tiptap/extension-table";
-import { Dropcursor } from "@tiptap/extensions";
+import { Placeholder } from "@tiptap/extensions";
 import ResizableImage from "./nodes/ResizableImage.tsx";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import CodeBlockHighlight from './nodes/CodeBlockHighlight.tsx'
-import { all, createLowlight } from 'lowlight';
-import { TextStyle, FontSize } from '@tiptap/extension-text-style'
-import './theme.css'
+import CodeBlockHighlight from "./nodes/CodeBlockHighlight.tsx";
+import { all, createLowlight } from "lowlight";
+import { TextStyle, FontSize } from "@tiptap/extension-text-style";
+import Document from "@tiptap/extension-document";
+import "./theme.css";
 
-const lowlight = createLowlight(all)
+const lowlight = createLowlight(all);
 
-const editorContent = JSON.parse(localStorage.getItem('editorContent')) || ''
+const CustomDocument = Document.extend({
+    content: "heading block*"
+});
+
+const editorContent = JSON.parse(localStorage.getItem("editorContent")) || "";
 export default function Editor() {
     const editor = useEditor({
         extensions: [
-            StarterKit,
+            CustomDocument,
+            StarterKit.configure({
+                document: false,
+                trailingNode: {
+                    node: "paragraph"
+                }
+            }),
+            Placeholder.configure({
+                placeholder: ({ node, pos }) => {
+                    if (node.type.name === "heading" && pos === 0) {
+                        return "What’s the title?";
+                    }
+                    if(node.type.name === "paragraph"){
+                      return "Can you add some further context?";
+                    }
+                }
+            }),
             Superscript,
             Subscript,
             Link.configure({
@@ -76,13 +96,13 @@ export default function Editor() {
             }),
             ResizableImage,
             CodeBlockHighlight.configure({
-              lowlight,
-              enableTabIndentation: true,
-              tabSize: 2,
-              defaultLanguage: 'javascript',
+                lowlight,
+                enableTabIndentation: true,
+                tabSize: 2,
+                defaultLanguage: "javascript"
             }),
             TextStyle,
-            FontSize,
+            FontSize
         ], // define your extension array
         content: editorContent, // initial content
         editorProps: {

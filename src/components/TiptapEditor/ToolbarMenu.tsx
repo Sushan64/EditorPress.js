@@ -106,7 +106,7 @@ export default function ToolbarMenu({ editor }) {
     const handleSave = useDebouncedCallback(
       () => {
         localStorage.setItem('editorContent', JSON.stringify(editor.getJSON()))
-        toast.success("Content Saved!")
+        //toast.success("Content Saved!")
        },
       3000
     );
